@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Tools</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <nav>
+        <div class="logo">MyTools</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="iqc.html">iPhone Quoter</a></li>
+            <li><a href="downloader.html">Downloader</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Selamat Datang di Web Tools</h1>
+        <p>Ini adalah halaman utama proyek web Anda. Silakan pilih salah satu alat dari navigasi di atas untuk memulai.</p>
+        <p>Website ini dibuat berdasarkan script yang Anda berikan, diubah menjadi layanan web interaktif dengan tema hitam-kebiruan dan animasi.</p>
+    </div>
+
+</body>
+</html>
