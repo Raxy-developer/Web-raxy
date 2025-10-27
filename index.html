@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Quoted Chat Maker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <nav>
+        <div class="logo">MyTools</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="iqc.html">iPhone Quoter</a></li>
+            <li><a href="downloader.html">Downloader</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>iPhone Quoted Chat (IQC) Maker</h1>
+        <p>Buat gambar chat palsu ala iPhone dengan teks Anda.</p>
+        
+        <form id="iqc-form">
+            <div class="form-group">
+                <label for="message-text">Teks Pesan:</label>
+                <textarea id="message-text" rows="4" placeholder="Contoh: Di Jual 500p Per Image😋"></textarea>
+            </div>
+            <button type="submit">Buat Gambar</button>
+        </form>
+
+        <div id="result-container">
+            </div>
+    </div>
+
+    <script>
+        document.getElementById('iqc-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const messageText = document.getElementById('message-text').value;
+            const resultContainer = document.getElementById('result-container');
+
+            if (!messageText) {
+                resultContainer.className = 'error';
+                resultContainer.innerHTML = '<p><strong>Error:</strong> Teks pesan tidak boleh kosong!</p>';
+                return;
+            }
+
+            // Menampilkan loading
+            resultContainer.className = 'loading';
+            resultContainer.innerHTML = '<p>Membuat gambar...</p>';
+
+            // Fungsi dari script Anda
+            let d = new Date();
+            let t = new Date(d.getTime() + 7*3600000).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false});
+            let battery = Math.floor(Math.random()*100)+1;
+
+            const imageUrl = `https://brat.siputzx.my.id/iphone-quoted?time=${encodeURIComponent(t)}&messageText=${encodeURIComponent(messageText)}&carrierName=INDOSAT%20OORE...&batteryPercentage=${battery}&signalStrength=4&emojiStyle=apple`;
+
+            // Menampilkan hasil
+            resultContainer.className = 'success';
+            resultContainer.innerHTML = `
+                <h2>Hasil Gambar:</h2>
+                <p>Gambar ini dibuat secara real-time.</p>
+                <img src="${imageUrl}" alt="Hasil iPhone Quoted Chat">
+                <p><strong>Link Gambar:</strong> <a href="${imageUrl}" target="_blank">${imageUrl}</a></p>
+            `;
+        });
+    </script>
+
+</body>
+</html>
