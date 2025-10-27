@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloader Tools</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <nav>
+        <div class="logo">MyTools</div>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="iqc.html">iPhone Quoter</a></li>
+            <li><a href="downloader.html">Downloader</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2>Mediafire Downloader</h2>
+        <form id="mediafire-form">
+            <div class="form-group">
+                <label for="mf-url">URL Mediafire:</label>
+                <input type="url" id="mf-url" placeholder="https://www.mediafire.com/file/...">
+            </div>
+            <button type="submit">Download</button>
+        </form>
+        <div id="mf-result" class="result-area"></div>
+
+        <hr style="border-color: #003366; margin: 2rem 0;">
+
+        <h2>All-in-One Downloader (TT, IG, etc)</h2>
+        <form id="aio-form">
+            <div class="form-group">
+                <label for="aio-url">URL Video (TikTok, IG, dll):</label>
+                <input type="url" id="aio-url" placeholder="https://www.tiktok.com/...">
+            </div>
+            <button type="submit">Download</button>
+        </form>
+        <div id="aio-result" class="result-area"></div>
+    </div>
+
+    <script>
+        // Helper untuk menampilkan hasil
+        function showResult(container, className, html) {
+            const el = document.getElementById(container);
+            el.className = `result-area ${className}`; // `result-area` tidak ada di CSS, ganti ke `#result-container` style
+            el.style.display = 'block';
+            el.style.marginTop = '2rem';
+            el.style.padding = '1.5rem';
+            el.style.background = '#050510';
+            el.style.border = '1px dashed #003366';
+            el.style.borderRadius = '5px';
+            el.style.wordWrap = 'break-word';
+
+            if (className === 'error') {
+                 el.style.background = '#300010';
+                 el.style.borderColor = '#aa0033';
+                 el.style.color = '#ffaaaa';
+            } else {
+                 el.style.background = '#050510';
+                 el.style.borderColor = '#003366';
+                 el.style.color = '#e0e0ff';
+            }
+            
+            el.innerHTML = html;
+        }
+
+        // --- Mediafire Handler ---
+        document.getElementById('mediafire-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const url = document.getElementById('mf-url').value;
+            if (!url) return;
+
+            showResult('mf-result', 'loading', '<p>Sedang mengambil data Mediafire...</p>');
+
+            try {
+                // Panggil backend kita, BUKAN mediafire langsung
+                const response = await fetch(`/api/mediafire?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.message);
+                }
+
+                showResult('mf-result', 'success', `
+                    <h3>${data.name}</h3>
+                    <p><strong>Ukuran:</strong> ${data.size}</p>
+                    <p><strong>Tipe:</strong> ${data.mimetype}</p>
+                    <a href="${data.download}" target="_blank" rel="noopener noreferrer">
+                        <button>DOWNLOAD FILE</button>
+                    </a>
+                `);
+            } catch (err) {
+                showResult('mf-result', 'error', `<p><strong>Error:</strong> ${err.message}</p>`);
+            }
+        });
+
+        // --- AIO Downloader Handler ---
+        document.getElementById('aio-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const url = document.getElementById('aio-url').value;
+            if (!url) return;
+
+            showResult('aio-result', 'loading', '<p>Sedang mengambil data video...</p>');
+
+            try {
+                // Panggil backend kita
+                const response = await fetch(`/api/aiodl?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+
+                if (data.error || data.status === 'error') {
+                    throw new Error(data.message || 'Gagal mengambil data dari API.');
+                }
+                
+                // API ssvid mengembalikan 'data' sebagai HTML
+                // Kita perlu mencari link video dari HTML tersebut
+                // Ini adalah bagian tersulit karena responsnya tidak terduga
+                
+                if (data.data) {
+                     // Kita akan menampilkan HTML mentah yang dikembalikan oleh API
+                     // Anda bisa parse HTML ini lebih lanjut jika tahu strukturnya
+                     showResult('aio-result', 'success', `
+                        <h3>Hasil Ditemukan</h3>
+                        <p>API mengembalikan data berikut. Silakan cari link download Anda:</p>
+                        <div style="background: #fff; color: #000; padding: 10px; border-radius: 5px; overflow: scroll; max-height: 300px;">
+                            ${data.data} 
+                        </div>
+                     `);
+                     // Catatan: data.data adalah string HTML, bukan JSON.
+                     // Untuk membuatnya berfungsi, Anda perlu mencari link (misal: 'href="..."') di dalam string 'data.data'
+                } else {
+                    throw new Error('API tidak mengembalikan data yang diharapkan.');
+                }
+
+            } catch (err) {
+                showResult('aio-result', 'error', `<p><strong>Error:</strong> ${err.message}</p>`);
+            }
+        });
+    </script>
+
+</body>
+</html>
